@@ -1,0 +1,70 @@
+package rev;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+//import jakarta.servlet.http.HttpSession;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+
+
+//@webservlet("/userlogin")
+@SuppressWarnings("serial")
+public class login extends HttpServlet {
+	
+     
+	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		//HttpSession session=request.getSession();
+		PrintWriter out=response.getWriter();
+		response.setContentType("text/html");
+		
+		String name=request.getParameter("uname");
+		String pass=request.getParameter("upass");
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection cnct = DriverManager.getConnection("jdbc:mysql://localhost:3306/tmf","root","revnanaj123");
+			 Statement st= cnct.createStatement();
+		String query="select*from user where username='"+name+"'and userpassword='"+pass+"'";
+		ResultSet rs=st.executeQuery(query);
+		if(rs.next())
+		{
+			out.println("<h1>"+name+":welcom to home page</h1><br>");
+			out.println("<h1>login successully</h1><br>");
+		}
+		else {
+			out.println("<h1>"+name+":enter correct name and password</h1><br>");
+			out.println("<h1>login is failed</h1><br>");
+		}
+		rs.close();
+		st.close();
+		cnct.close();
+		}
+		
+		catch (SQLException e) {
+		} catch (ClassNotFoundException e) {
+			out.println("<h1>server not respond</h1><br>");
+			e.printStackTrace();
+		}
+	    
+
+
+	   
+		
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doGet(request, response);
+	}
+
+}
